@@ -7,10 +7,13 @@ import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.Hitsplat;
 import net.runelite.api.NPC;
+import net.runelite.api.WorldView;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameTick;
 import net.runelite.api.events.HitsplatApplied;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
+import net.runelite.api.gameval.NpcID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -30,8 +33,8 @@ import java.util.concurrent.TimeUnit;
 public class RoyalTitansPlugin extends Plugin {
 
 	// NPC IDs
-	private static final int BRANDA_ID = 12596;
-	private static final int ELDRIC_ID = 14147;
+	private static final int BRANDA_ID = NpcID.RT_FIRE_QUEEN; //12596;
+	private static final int ELDRIC_ID = NpcID.RT_ICE_KING; //14147;
 
 	private static final int COMBINED_HP = 1200;
 	private static final double BASE_DROP_RATE = 75.0;
@@ -130,6 +133,72 @@ public class RoyalTitansPlugin extends Plugin {
 				eldricDamage += damage;
 			}
 		}
+	}
+
+	@Subscribe
+	public void onGameTick(GameTick event) {
+		// Validate NPC references and clean up if needed
+		validateNpcReferences();
+
+		// Check if player has left the encounter area
+		checkAreaExit();
+	}
+
+	private void validateNpcReferences() {
+		// Branda reference became invalid, cleaning up
+		if (branda != null && !isNpcValid(branda)) {
+			branda = null;
+		}
+
+		// Eldric reference became invalid, cleaning up
+		if (eldric != null && !isNpcValid(eldric)) {
+			eldric = null;
+		}
+	}
+
+	private void checkAreaExit() {
+		// if encounter was active but both NPCs are now gone, player likely left the area
+		if (encounterActive && branda == null && eldric == null) {
+			// Check if there are any Royal Titan NPCs in the current world view
+			boolean anyTitansPresent = false;
+			WorldView worldView = client.getTopLevelWorldView();
+
+			if (worldView != null) {
+				for (NPC npc : worldView.npcs()) {
+					if (npc.getId() == BRANDA_ID || npc.getId() == ELDRIC_ID) {
+						anyTitansPresent = true;
+						break;
+					}
+				}
+			}
+
+			// If no Royal Titans found, player has left the area - reset counters
+			if (!anyTitansPresent) {
+				resetDamageCounters();
+			}
+		}
+	}
+
+	private boolean isNpcValid(NPC npc) {
+		if (npc == null || npc.isDead()) {
+			return false;
+		}
+		
+		// Check if NPC exists in the current world view
+		WorldView worldView = client.getTopLevelWorldView();
+		if (worldView == null) {
+			return false;
+		}
+
+		// Iterate through NPCs to find our reference
+		for (NPC worldNpc : worldView.npcs()) {
+			if (worldNpc == npc) {
+				return true;
+			}
+		}
+
+		// Titan NPCs not found in the current world view, cleanup NPC reference
+		return false;
 	}
 
 	private void scheduleReset() {
