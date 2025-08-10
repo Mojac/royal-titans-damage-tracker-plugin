@@ -13,13 +13,31 @@ A RuneLite plugin that tracks your damage contribution during Royal Titans encou
 
 ## Installation
 
-1. Download the latest release from the [Releases](https://github.com/Mojac/royal-titans-damage-tracker-plugin/releases) page
-2. Place the `.jar` file in your RuneLite plugins folder:
+### Building from Source (Required)
+
+Since this plugin is not yet available in the RuneLite Plugin Hub, you'll need to build it yourself:
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/Mojac/royal-titans-damage-tracker-plugin.git
+   cd royal-titans-damage-tracker-plugin
+   ```
+
+2. Build the plugin:
+   ```bash
+   ./gradlew build
+   ```
+
+3. Locate the built `.jar` file in `build/libs/`
+
+4. Place the `.jar` file in your RuneLite plugins folder:
    - **Windows**: `%USERPROFILE%\.runelite\plugins`
    - **macOS**: `~/.runelite/plugins`
    - **Linux**: `~/.runelite/plugins`
-3. Restart RuneLite
-4. Enable the plugin in the Plugin Hub or Plugin Configuration
+
+5. Restart RuneLite
+
+6. The plugin should appear in your Runelite Plugin Configuration side panel
 
 ## Usage
 
