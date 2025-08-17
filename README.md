@@ -13,9 +13,18 @@ A RuneLite plugin that tracks your damage contribution during Royal Titans encou
 
 ## Installation
 
-### Building from Source (Required)
+### From Plugin Hub (Recommended)
 
-Since this plugin is not yet available in the RuneLite Plugin Hub, you'll need to build it yourself:
+1. Open RuneLite
+2. Click the wrench (or Spanner) icon to open Configuration
+3. Click "Plugin Hub" at the top right of the sidebar
+4. Search for "Royal Titans Damage Tracker"
+5. Click "Install"
+6. The plugin will appear in your Plugin Configuration panel
+
+### Building from Source (Advanced Users)
+
+If you want to build from the latest source code:
 
 1. Clone this repository:
    ```bash
@@ -36,8 +45,6 @@ Since this plugin is not yet available in the RuneLite Plugin Hub, you'll need t
    - **Linux**: `~/.runelite/plugins`
 
 5. Restart RuneLite
-
-6. The plugin should appear in your Runelite Plugin Configuration side panel
 
 ## Usage
 
@@ -107,6 +114,11 @@ src/main/java/com/royaltitans/
 - None
 
 ## Changelog
+
+### v1.1.0
+- Fixed tracker resetting immediately when titans are killed instead of waiting for configured delay
+- Plugin is now available on RuneLite Plugin Hub
+- Improved encounter state management
 
 ### v1.0.0
 - Initial release
