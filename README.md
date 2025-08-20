@@ -7,54 +7,20 @@ A RuneLite plugin that tracks your damage contribution during Royal Titans encou
 - **Real-time Damage Tracking**: Monitors damage dealt to both Branda (Fire Queen) and Eldric (Ice King)
 - **Contribution Percentage**: Shows your damage as a percentage of the total boss HP (1200)
 - **Dynamic Drop Rate Calculation**: Calculates your drop rate based on damage contribution (base rate: 1/75)
-- **Smart Area Detection**: Automatically resets when you leave the Royal Titans area
-- **Encounter Management**: Handles titan respawns and encounter resets intelligently
-- **Customizable Display**: Configure colors, visibility, and information shown
+- **Smart Encounter Detection**: Automatically resets when you leave the Royal Titans area or when titans respawn
 
 ## Installation
 
-### From Plugin Hub (Recommended)
-
 1. Open RuneLite
-2. Click the wrench (or Spanner) icon to open Configuration
+2. Click the wrench icon to open Configuration
 3. Click "Plugin Hub" at the top right of the sidebar
 4. Search for "Royal Titans Damage Tracker"
 5. Click "Install"
-6. The plugin will appear in your Plugin Configuration panel
-
-### Building from Source (Advanced Users)
-
-If you want to build from the latest source code:
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/Mojac/royal-titans-damage-tracker-plugin.git
-   cd royal-titans-damage-tracker-plugin
-   ```
-
-2. Build the plugin:
-   ```bash
-   ./gradlew build
-   ```
-
-3. Locate the built `.jar` file in `build/libs/`
-
-4. Place the `.jar` file in your RuneLite plugins folder:
-   - **Windows**: `%USERPROFILE%\.runelite\plugins`
-   - **macOS**: `~/.runelite/plugins`
-   - **Linux**: `~/.runelite/plugins`
-
-5. Restart RuneLite
 
 ## Usage
 
 The plugin automatically activates when Royal Titans NPCs are detected. The overlay will show:
 
-- **Total Damage**: Combined damage to both titans with contribution percentage
-- **Individual Damage**: Separate damage counters for Branda and Eldric (configurable)
-- **Drop Rate**: Calculated drop rate based on your damage contribution (configurable)
-
-### Example Display
 ```
 Total: 324 (27.0%)
 Branda: 180
@@ -64,50 +30,18 @@ Drop Rate: 1/278
 
 ## Configuration Options
 
-Access configuration through RuneLite's Plugin Configuration panel:
+Access configuration through RuneLite's Plugin Configuration panel to customize:
 
-### Display Options
-- **Show Individual Titan Damage**: Toggle individual Branda/Eldric damage lines
-- **Show Drop Rate**: Toggle drop rate calculation display
-
-### Overlay Settings
-- **Show Only During Encounter**: Hide overlay when not fighting Royal Titans
-- **Reset Delay**: Delay (0-18 seconds) before resetting counters after encounter ends
-- **Color Customization**: Set custom colors for different text elements
+- **Display Options**: Toggle individual titan damage and drop rate display
+- **Overlay Settings**: Show only during encounters, reset delay timing, and color customization
 
 ## How Drop Rate Works
 
-The plugin calculates drop rates based on the Royal Titans mechanic where drop rate scales with damage contribution:
+Drop rate for the staff pieces and the prayer scrolls scale with damage contribution:
 
-- **Base Rate**: 1/75 (assuming 100% damage contribution)
+- **Base Rate**: 1/75 (assuming 100% contribution)
 - **Your Rate**: Base rate divided by your contribution percentage
 - **Example**: If you deal 25% of total damage, your rate becomes 1/300
-
-## Development
-
-### Building from Source
-
-```bash
-git clone https://github.com/Mojac/royal-titans-damage-tracker-plugin.git
-cd royal-titans-damage-tracker-plugin
-./gradlew build
-```
-
-### Project Structure
-```
-src/main/java/com/royaltitans/
-├── RoyalTitansPlugin.java      # Main plugin logic
-├── RoyalTitansConfig.java      # Configuration interface  
-└── RoyalTitansOverlay.java     # UI overlay rendering
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## Known Issues
 
@@ -115,17 +49,16 @@ src/main/java/com/royaltitans/
 
 ## Changelog
 
+### v1.2.0
+- Fixed tracker resetting immediately when titans are killed - now properly waits for configured delay
+- Improved encounter detection and area exit handling
+- Better state management for titan defeats vs. player leaving area
+
 ### v1.1.0
-- Fixed tracker resetting immediately when titans are killed instead of waiting for configured delay
-- Plugin is now available on RuneLite Plugin Hub
-- Improved encounter state management
+- Attempted fix for reset timing (incomplete)
 
 ### v1.0.0
 - Initial release
-- Basic damage tracking for Royal Titans
-- Drop rate calculation
-- Configurable overlay with color options
-- Smart encounter detection and area exit handling
 
 ## License
 
