@@ -318,12 +318,12 @@ public class RoyalTitansPlugin extends Plugin {
 		return brandaBurnDamage + eldricBurnDamage;
 	}
 
-	public int getTotalPlayerTotalDamage() {
+	public int getTotalPlayerDamage() {
 		return brandaDamage + eldricDamage;
 	}
 
 	public int getTotalDamage() {
-		int playerDamage = getTotalPlayerTotalDamage();
+		int playerDamage = getTotalPlayerDamage();
 		if (config.includeBurn()) {
 			return playerDamage + getTotalBurnDamage();
 		}
