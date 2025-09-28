@@ -37,10 +37,40 @@ public interface RoyalTitansConfig extends Config {
 		return true;
 	}
 
+	@ConfigItem(
+		keyName = "displayBurnDamage",
+		name = "Display Burn Damage",
+		description = "Show burn damage as a separate line in the overlay",
+		section = displaySection,
+		position = 2
+	)
+	default boolean displayBurnDamage() {
+		return true;
+	}
+
+	@ConfigSection(
+		name = "Damage Calculation",
+		description = "Configure which damage types are included in contribution calculations",
+		position = 1
+	)
+	String damageSection = "damage";
+
+	@ConfigItem(
+		keyName = "includeBurn",
+		name = "Include Burn Damage",
+		description = "Include environmental burn damage in drop rate calculations. " +
+			"Note: Burn damage is environmental and not directly attributed to any player.",
+		section = damageSection,
+		position = 0
+	)
+	default boolean includeBurn() {
+		return false;
+	}
+
 	@ConfigSection(
 		name = "Overlay Settings",
 		description = "Overlay appearance and positioning",
-		position = 1
+		position = 2
 	)
 	String overlaySection = "overlay";
 
@@ -101,11 +131,22 @@ public interface RoyalTitansConfig extends Config {
 	}
 
 	@ConfigItem(
+		keyName = "burnColor",
+		name = "Burn Damage Color",
+		description = "Color of the burn damage text",
+		section = overlaySection,
+		position = 5
+	)
+	default java.awt.Color burnColor() {
+		return java.awt.Color.RED;
+	}
+
+	@ConfigItem(
 		keyName = "dropRateColor",
 		name = "Drop Rate Color",
 		description = "Color of the drop rate text",
 		section = overlaySection,
-		position = 5
+		position = 6
 	)
 	default java.awt.Color dropRateColor() {
 		return java.awt.Color.ORANGE;

@@ -46,6 +46,7 @@ public class RoyalTitansOverlay extends Overlay {
         Color totalColor = config.totalColor();
         Color brandaColor = config.brandaColor();
         Color eldricColor = config.eldricColor();
+        Color burnColor = config.burnColor();
         Color dropRateColor = config.dropRateColor();
 
         // Line 1: Total damage with percentage
@@ -71,11 +72,48 @@ public class RoyalTitansOverlay extends Overlay {
                 .build());
         }
 
-        // Line 4: Drop rate (if enabled)
+        // Line 4-5: Burn damage (if enabled and there is burn damage)
+        if (config.displayBurnDamage() && plugin.getTotalBurnDamage() > 0) {
+            if (config.showIndividualDamage()) {
+                // Show individual burn damage for each titan
+                if (plugin.getBrandaBurnDamage() > 0) {
+                    panelComponent.getChildren().add(LineComponent.builder()
+                        .left("Branda Burn: " + plugin.getBrandaBurnDamage())
+                        .leftColor(burnColor)
+                        .build());
+                }
+
+                if (plugin.getEldricBurnDamage() > 0) {
+                    panelComponent.getChildren().add(LineComponent.builder()
+                        .left("Eldric Burn: " + plugin.getEldricBurnDamage())
+                        .leftColor(burnColor)
+                        .build());
+                }
+            } else {
+                // Show total burn damage only
+                panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Total Burn: " + plugin.getTotalBurnDamage())
+                    .leftColor(burnColor)
+                    .build());
+            }
+        }
+
+        // Last Line: Drop rate (if enabled)
         if (config.showDropRate()) {
             String dropRate = plugin.getDropRate();
+            String dropRateText = "Drop Rate: " + dropRate;
+
+            // Add note about burn inclusion if burn damage exists and is included
+            if (plugin.getTotalBurnDamage() > 0) {
+                if (config.includeBurn()) {
+                    dropRateText += " (w/ burn)";
+                } else {
+                    dropRateText += " (no burn)";
+                }
+            }
+
             panelComponent.getChildren().add(LineComponent.builder()
-                .left("Drop Rate: " + dropRate)
+                .left(dropRateText)
                 .leftColor(dropRateColor)
                 .build());
         }

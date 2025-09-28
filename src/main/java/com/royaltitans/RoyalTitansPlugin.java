@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.Hitsplat;
+import net.runelite.api.HitsplatID;
 import net.runelite.api.NPC;
 import net.runelite.api.WorldView;
 import net.runelite.api.events.ChatMessage;
@@ -55,6 +56,8 @@ public class RoyalTitansPlugin extends Plugin {
 
 	private int brandaDamage = 0;
 	private int eldricDamage = 0;
+	private int brandaBurnDamage = 0;
+	private int eldricBurnDamage = 0;
 	private boolean encounterActive = false;
 	private NPC branda = null;
 	private NPC eldric = null;
@@ -137,20 +140,29 @@ public class RoyalTitansPlugin extends Plugin {
 		Actor target = event.getActor();
 		Hitsplat hitsplat = event.getHitsplat();
 
-		// Only count damage from the local player
-		if (!hitsplat.isMine()) {
-			return;
-		}
-
 		// Only count damage to the Royal Titans
 		if (target instanceof NPC) {
 			NPC npc = (NPC) target;
 			int damage = hitsplat.getAmount();
 
 			if (npc.getId() == BRANDA_ID) {
-				brandaDamage += damage;
+				// Check if this is burn damage (environmental damage)
+				if (hitsplat.getHitsplatType() == HitsplatID.BURN) {
+					brandaBurnDamage += damage;
+				}
+				// Only count player damage if it's mine
+				else if (hitsplat.isMine()) {
+					brandaDamage += damage;
+				}
 			} else if (npc.getId() == ELDRIC_ID) {
-				eldricDamage += damage;
+				// Check if this is burn damage (environmental damage)
+				if (hitsplat.getHitsplatType() == HitsplatID.BURN) {
+					eldricBurnDamage += damage;
+				}
+				// Only count player damage if it's mine
+				else if (hitsplat.isMine()) {
+					eldricDamage += damage;
+				}
 			}
 		}
 	}
@@ -197,12 +209,15 @@ public class RoyalTitansPlugin extends Plugin {
 			ticksSinceLastTitanSeen++;
 		}
 
-		// Only reset if:
-		// 1. No royal titans have been seen for 10 ticks (6 seconds) - player left the area
-		// 2. No reset is already scheduled
-		// 3. Titans were not defeated (player left during active fight)
-		if (ticksSinceLastTitanSeen >= 10 && !resetScheduled && !titansDefeated) {
-			resetDamageCounters();
+		// Handle different scenarios when titans have been gone for 10+ ticks
+		if (ticksSinceLastTitanSeen >= 10 && !resetScheduled) {
+			if (!titansDefeated) {
+				// Player left the area during an active fight, reset immediately
+				resetDamageCounters();
+			} else {
+				// Titans were defeated and other player looted one, schedule reset
+				scheduleReset();
+			}
 		}
 		
 	}
@@ -272,6 +287,8 @@ public class RoyalTitansPlugin extends Plugin {
 	private void resetDamageCounters() {
 		brandaDamage = 0;
 		eldricDamage = 0;
+		brandaBurnDamage = 0;
+		eldricBurnDamage = 0;
 		encounterActive = false;
 		branda = null;
 		eldric = null;
@@ -289,8 +306,28 @@ public class RoyalTitansPlugin extends Plugin {
 		return eldricDamage;
 	}
 
-	public int getTotalDamage() {
+	public int getBrandaBurnDamage() {
+		return brandaBurnDamage;
+	}
+
+	public int getEldricBurnDamage() {
+		return eldricBurnDamage;
+	}
+
+	public int getTotalBurnDamage() {
+		return brandaBurnDamage + eldricBurnDamage;
+	}
+
+	public int getTotalPlayerTotalDamage() {
 		return brandaDamage + eldricDamage;
+	}
+
+	public int getTotalDamage() {
+		int playerDamage = getTotalPlayerTotalDamage();
+		if (config.includeBurn()) {
+			return playerDamage + getTotalBurnDamage();
+		}
+		return playerDamage;
 	}
 
 	public double getContributionPercentage() {
